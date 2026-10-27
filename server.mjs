@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// cbm-lean — a thin MCP server in front of the codebase-memory-mcp binary.
+// graph-ask — a thin MCP server in front of the codebase-memory-mcp binary.
 //
 // Why it exists: measured on 5 structural questions (haiku, one rep), letting the
 // model talk to cbm directly cost 2.35x MORE billed input than plain grep/read,
@@ -490,7 +490,7 @@ async function handle(req) {
     return {
       protocolVersion: params?.protocolVersion || "2025-06-18",
       capabilities: { tools: {} },
-      serverInfo: { name: "cbm-lean", version: "1.0.0" },
+      serverInfo: { name: "graph-ask", version: "1.0.0" },
     };
   }
   if (method === "tools/list") {
@@ -510,7 +510,7 @@ async function handle(req) {
       // Actionable error text, per the tool-authoring guidance: the model should
       // be able to fix the call from the message alone.
       return {
-        content: [{ type: "text", text: `cbm-lean error: ${err.message}. Check the project name with graph_projects, or index the repo with graph_index.` }],
+        content: [{ type: "text", text: `graph-ask error: ${err.message}. Check the project name with graph_projects, or index the repo with graph_index.` }],
         isError: true,
       };
     }
