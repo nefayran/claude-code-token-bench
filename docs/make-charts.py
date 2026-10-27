@@ -90,9 +90,10 @@ class Page:
     def __init__(self, width=W, margin=M):
         self.w, self.m, self.y, self.ops = width, margin, margin, []
 
-    def text(self, s, size, color, bold=False, x=None, gap_after=0.0):
+    def text(self, s, size, color, bold=False, x=None, gap_after=0.0, boxed=False):
         for line in wrap(s, size, self.w - 2 * self.m, bold):
-            self.ops.append(("text", (self.m if x is None else x), self.y, line, size, color, bold, "left"))
+            self.ops.append(("text", (self.m if x is None else x), self.y, line, size, color, bold, "left")
+                            + ((True,) if boxed else ()))
             self.y += line_h(size)
         self.y += gap_after
 
@@ -160,7 +161,7 @@ def bars(page, rows, maximum, ticks, fmt, groups=None, refline=None, label_left=
         page.y += BAR_H
         if r.get("detail"):
             page.gap(0.06)
-            page.text(r["detail"], DETAIL, SECONDARY, x=x0)
+            page.text(r["detail"], DETAIL, SECONDARY, x=x0, boxed=True)
         page.gap(0.16 if label_left else ROW_GAP)
     bottom = page.y - (0.16 if label_left else ROW_GAP) + 0.15
     for t in ticks:  # the one axis: faint gridlines behind the bars, tick labels under them
@@ -207,11 +208,11 @@ def results_chart():
         for arm, label, color in setups:
             med, correct, _ = stats(file, arm)
             rows.append(dict(label=label, label_color=SECONDARY, value=med, color=color,
-                             end=f"{med:,} · {correct} correct"))
+                             end=f"{med:,} · {correct}"))
     chart("results-priced-tokens.png", "The code graph did not make Claude Code cheaper",
-          "Median priced tokens per run over 252 headless Claude Code runs. Lower is cheaper. "
-          "Labels give correct answers.",
-          rows, 50_000, [0, 10_000, 20_000, 30_000, 40_000, 50_000], groups=groups, label_left=True,
+          "Median priced tokens per run over 252 headless Claude Code runs, and correct answers. "
+          "Lower is cheaper.",
+          rows, 50_000, [0, 20_000, 40_000], groups=groups, label_left=True,
           footer="Priced tokens = fresh input + 1.25 × cache writes + 0.1 × cache reads, Anthropic's price "
                  "multipliers. Claude Code 2.1.283, codebase-memory-mcp 0.9.0.")
 
