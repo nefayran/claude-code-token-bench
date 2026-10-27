@@ -2,7 +2,7 @@
 
 A benchmark of 252 headless Claude Code runs on public repositories. Each run asks one question about the code, and
 the benchmark counts every token, checks the answer and compares three setups: a code graph reached through my
-wrapper, the same graph server used directly, and Claude Code's own Read and Grep. The runner, the wrapper and every
+wrapper, graph-ask, the same graph server used directly, and Claude Code's own Read and Grep. The runner, the wrapper and every
 raw run, answers included, are in this repository.
 
 ![Median priced tokens per run for the three setups in three settings, with correct answers as labels](docs/images/results-priced-tokens.png)
@@ -74,7 +74,7 @@ pipelines the model writes.
 | `bench/stats.py` | medians, bootstrap intervals and Wilcoxon signed-rank tests |
 | `results/*.json` | every run of the Claude Code benchmark, answers included |
 | `bench/run-copilot.mjs`, `bench/questions-v2/`, `bench/PLAN-v2.md`, `results/v2/` | a second benchmark, in GitHub Copilot CLI on larger repositories |
-| `server.mjs`, `digest.mjs` | the wrapper under test: an MCP server in front of codebase-memory-mcp |
+| `server.mjs`, `digest.mjs` | graph-ask, the wrapper under test: an MCP server in front of codebase-memory-mcp |
 | `tools/` | three small scripts for measuring your own sessions, listed under [Tools](#tools) |
 | `docs/` | the charts and the video, and the two scripts that draw them |
 
@@ -216,9 +216,9 @@ was cheaper on 15 of those 16 questions. Sonnet's went to 0.74 and Opus 5.5's to
 different system prompts and tools, so these numbers compare with each other, not with the Claude Code runs. The plan
 was written before the first run (`bench/PLAN-v2.md`), and the analysis is in `results/v2/stats.md`.
 
-## The wrapper: server.mjs
+## The wrapper: graph-ask (server.mjs)
 
-A thin MCP server in front of codebase-memory-mcp. It gives an agent 11 short tools instead of the server's 14,
+graph-ask is a thin MCP server in front of codebase-memory-mcp, named after its one-call tool `graph_ask`. It gives an agent 11 short tools instead of the server's 14,
 strips the fields no code question needs, and answers a whole structural question in one call.
 
 ```sh
